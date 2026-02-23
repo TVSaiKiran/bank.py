@@ -1,128 +1,134 @@
-# bank.py
-# 🏦 Banking System Simulation (Python Project)
+class BankAccount:
+    def __init__(self, acc_no, name, balance=0):   # ✅ FIXED
+        self.acc_no = acc_no
+        self.name = name
+        self.balance = balance
+        self.transactions = []
 
-## 📌 Project Overview
+    # DEPOSIT
+    def deposit(self, amount):
+        if amount <= 0:
+            print("❌ Enter valid deposit amount")
+            return
 
-This is a *console-based Banking System Simulation* developed using *core Python*. The application allows users to create bank accounts, deposit and withdraw money, check balances, and view transaction history.
+        self.balance += amount
+        self.transactions.append(f"Deposited ₹{amount}")
 
-The project demonstrates fundamental programming concepts such as *Object-Oriented Programming (OOP), input validation, and menu-driven logic*.
+        print("\n===== DEPOSIT DETAILS =====")
+        print("Account Number:", self.acc_no)
+        print("Account Holder:", self.name)
+        print("You have deposited ₹", amount)
+        print("Current Balance:", self.balance)
 
----
+    # WITHDRAW
+    def withdraw(self):
+        print("\nCurrent Balance:", self.balance)
 
-## 🎯 Features
+        try:
+            amount = float(input("Enter amount to withdraw: "))
+        except ValueError:
+            print("❌ Invalid amount")
+            return
 
-### ✅ Account Creation
+        if amount <= 0:
+            print("❌ Enter valid withdrawal amount")
+        elif amount > self.balance:
+            print("❌ Insufficient balance")
+        else:
+            self.balance -= amount
+            self.transactions.append(f"Withdrawn ₹{amount}")
+            print("✅ Withdrawal Successful")
+            print("Remaining Balance:", self.balance)
 
-* Account number must contain *exactly 5 digits*
-* Prevents duplicate account numbers
-* Collects account holder name
+    # BALANCE CHECK
+    def display_balance(self):
+        print("Current Balance:", self.balance)
 
----
-
-### 💰 Deposit Money
-
-* Allows users to deposit money into their account
-* Displays:
-
-  * Account details
-  * Deposited amount
-  * Updated balance
-
----
-
-### 💸 Withdraw Money
-
-* Shows current balance before withdrawal
-* Prevents withdrawal if insufficient funds
-* Updates balance after successful withdrawal
-
----
-
-### 📊 Balance Inquiry
-
-* Displays the current account balance
-
----
-
-### 📜 Transaction History
-
-* Stores all previous transactions
-* Shows deposit and withdrawal records
-
----
-
-### 🚪 Exit Option
-
-* Safely exits the application
-
----
-
-## 🛠️ Technologies Used
-
-* Python (Core Python)
-* Object-Oriented Programming (OOP)
-* Dictionary Data Structures
-* Input Validation
-
----
-
-## 🧠 Concepts Demonstrated
-
-* Classes and Objects
-* Encapsulation
-* Conditional Statements
-* Functions
-* Lists and Dictionaries
-* Menu-driven programs
-
----
-
-## ▶️ How to Run the Project
-
-### Step 1:
-
-Install Python (if not installed)
-
-### Step 2:
-
-Save the file as:
+    # TRANSACTION HISTORY
+    def show_transactions(self):
+        print("\n===== TRANSACTION HISTORY =====")
+        if not self.transactions:
+            print("No transactions yet.")
+        else:
+            for t in self.transactions:
+                print(t)
 
 
-banking_system.py
+accounts = {}
 
 
-### Step 3:
+# CREATE ACCOUNT
+def create_account():
+    acc_no = input("Enter Account Number: ").strip()
 
-Run the program:
+    if not acc_no.isdigit() or len(acc_no) != 5:
+        print("❌ Enter valid account number (must be exactly 5 digits)")
+        return
+
+    if acc_no in accounts:
+        print("Account already exists!")
+        return
+
+    name = input("Enter Account Holder Name: ").strip()
+    accounts[acc_no] = BankAccount(acc_no, name)
+    print("✅ Account Created Successfully")
 
 
-python banking_system.py
+def get_account():
+    acc_no = input("Enter Account Number: ").strip()
+    return accounts.get(acc_no)
 
 
----
+# MAIN MENU
+while True:
+    print("\n===== BANK MENU =====")
+    print("1. Create Account")
+    print("2. Deposit")
+    print("3. Withdraw")
+    print("4. Check Balance")
+    print("5. Transaction History")
+    print("6. Exit")
 
-## 🧪 Example Workflow
+    choice = input("Enter choice: ").strip()
 
-1. Create a new account using a 5-digit number
-2. Deposit money into the account
-3. Withdraw funds (if sufficient balance)
-4. Check balance and transaction history
+    if choice == "1":
+        create_account()
 
----
+    elif choice == "2":
+        acc = get_account()
+        if acc:
+            try:
+                amt = float(input("Enter amount to deposit: "))
+                acc.deposit(amt)
+            except ValueError:
+                print("❌ Invalid amount")
+        else:
+            print("Account not found!")
 
-## 🚀 Future Enhancements
+    elif choice == "3":
+        acc = get_account()
+        if acc:
+            acc.withdraw()
+        else:
+            print("Account not found!")
 
-Possible improvements:
+    elif choice == "4":
+        acc = get_account()
+        if acc:
+            acc.display_balance()
+        else:
+            print("Account not found!")
 
-* Save data permanently using file handling
-* Add ATM PIN authentication
-* Auto-generate account numbers
-* Develop a GUI version using Tkinter
+    elif choice == "5":
+        acc = get_account()
+        if acc:
+            acc.show_transactions()
+        else:
+            print("Account not found!")
 
----
+    elif choice == "6":
+        print("🙏 Thank you for using Banking System")
+        break
 
-## 📄 Author
-
-Developed as a *Python practice project* to demonstrate core programming skills suitable for fresher-level resumes and interviews.
-
----
+    else:
+        print("Invalid choice! Try again.")
